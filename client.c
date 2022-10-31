@@ -1,3 +1,4 @@
+// CLIENT CODE
 #include <stdio.h> 
 #include <sys/socket.h> 
 #include <stdlib.h> 
@@ -11,13 +12,13 @@
 int main(int argc, char const *argv[]) 
 { 
     struct sockaddr_in address; 
-    int sock = 0;
+    int _socket = 0;
     int message_read; 
     struct sockaddr_in serv_addr; 
-    char *hello = "Message from client: Hello"; 
+    char *hello_message = "Message from client: Hello"; 
     char buffer_message[1024] = {0};
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+    if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
         // handle failure
         printf("\n Error: Socket creation error \n"); 
@@ -37,16 +38,16 @@ int main(int argc, char const *argv[])
         return -1; 
     } 
    
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    if (connect(_socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
     { 
         // handle failure
         printf("\n Error: Connection Failed \n"); 
         return -1; 
     } 
 
-    send(sock , hello , strlen(hello) , 0 ); 
+    send(_socket , hello_message , strlen(hello_message) , 0 ); 
     printf("Hello message has been successfully sent\n"); 
-    message_read = read( sock , buffer_message, 1024); 
+    message_read = read( _socket , buffer_message, 1024); 
     printf("%s\n",buffer_message ); 
     return 0; 
 } 
