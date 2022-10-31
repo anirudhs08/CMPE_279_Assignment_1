@@ -1,3 +1,4 @@
+// SERVER CODE
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -9,7 +10,7 @@
 #define PORT 8081
 
 int dropPrivilegeToNobodyUser() {
-    struct passwd* pwd;
+    struct passwd* password;
     pid_t idOfChildProcess, pid;
     idOfChildProcess = fork();
     printf("The child Process ID is : %d\n",idOfChildProcess);
@@ -21,9 +22,9 @@ int dropPrivilegeToNobodyUser() {
         printf("\n the process of fork is successful \n");
 
         // set privilege as nobody user for read-write
-        pwd = getpwnam("nobody");
+        password = getpwnam("nobody");
 
-        pid = setuid(pwd->pw_uid);
+        pid = setuid(password->pw_uid);
         printf("The child UID is : %d \n",getuid());
         if(pid==0){
 
@@ -39,12 +40,12 @@ int main(int argc, char const *argv[])
 {
     int server_fileDescriptor;
     int message_read;
-    int new_socket;
+    int socket_new;
     struct sockaddr_in address;
     int opt = 1;
     int address_length = sizeof(address);
     char buffer_message[1024] = {0};
-    char *hello = "Message from server: Hello";
+    char *hello_message = "Message from server: Hello";
 
     // Show ASLR
     printf("execve=0x%p\n", execve);
@@ -83,7 +84,7 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fileDescriptor, (struct sockaddr *)&address,
+    if ((socket_new = accept(server_fileDescriptor, (struct sockaddr *)&address,
                        (socklen_t*)&address_length))<0)
     {
         perror("accept");
@@ -94,9 +95,9 @@ int main(int argc, char const *argv[])
         
         // process the message
 
-        message_read = read(new_socket, buffer_message, 1024);
+        message_read = read(socket_new, buffer_message, 1024);
         printf("Number of bytes read is %d for the message: %s\n", message_read, buffer_message);
-        send(new_socket, hello, strlen(hello), 0);
+        send(socket_new, hello_message, strlen(hello_message), 0);
         printf("Hello message has been successfully sent\n");
     }
     return 0;
